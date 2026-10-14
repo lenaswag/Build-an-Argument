@@ -1,0 +1,1240 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Let's Build Our Argument!</title>
+
+  <style>
+    :root {
+      --green-dark: #365943;
+      --green: #6F9277;
+      --green-light: #E7EEE4;
+      --green-pale: #F0F5EE;
+      --cream: #F8F5ED;
+      --white: #FFFEFB;
+      --border: #D3DED0;
+      --text: #354A3B;
+      --muted: #718574;
+      --shadow: 0 8px 28px rgba(42, 76, 48, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans", sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .app {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      margin-bottom: 7px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(25px, 2.7vw, 39px);
+      color: var(--green-dark);
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 8px 0 0;
+      font-size: 14px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .tool-btn,
+    .action-btn {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 11px 14px;
+      color: var(--green-dark);
+      font-weight: 700;
+      transition: 0.2s;
+    }
+
+    .tool-btn:hover,
+    .action-btn:hover {
+      background: var(--green-light);
+    }
+
+    .tool-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .topic {
+      background: var(--green-dark);
+      color: white;
+      padding: 17px 22px;
+      border-radius: 14px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topic-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.75;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .topic-question {
+      font-size: clamp(15px, 1.4vw, 20px);
+      font-weight: 700;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 21px;
+    }
+
+    .panel-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .panel-title {
+      font-size: 21px;
+      color: var(--green-dark);
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .panel-note {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .writing-section {
+      margin-bottom: 12px;
+    }
+
+    .writing-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--green-dark);
+      margin-bottom: 6px;
+    }
+
+    .drop-zone {
+      min-height: 57px;
+      border: 2px dashed #BED0BC;
+      border-radius: 12px;
+      background: var(--green-pale);
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: 0.15s;
+      cursor: pointer;
+    }
+
+    .drop-zone.drag-over,
+    .drop-zone.selected-target {
+      background: #DCEADD;
+      border-color: var(--green-dark);
+      box-shadow: 0 0 0 3px rgba(111, 146, 119, 0.15);
+    }
+
+    .placeholder {
+      color: #93A695;
+      font-size: 13px;
+      font-style: italic;
+    }
+
+    .placed-expression {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: white;
+      border: 1px solid #B6CDB5;
+      border-radius: 9px;
+      padding: 10px 12px;
+      color: var(--green-dark);
+      font-weight: 800;
+      font-size: 15px;
+      max-width: 100%;
+    }
+
+    .remove-expression {
+      border: none;
+      background: transparent;
+      color: #8C9F8D;
+      font-size: 18px;
+      line-height: 1;
+      padding: 0 2px;
+    }
+
+    .remove-expression:hover {
+      color: #B05252;
+    }
+
+    .writing-line {
+      flex: 1;
+      min-width: 28px;
+      height: 22px;
+      border-bottom: 1px solid #C4D2C4;
+    }
+
+    .bank {
+      background: #E8EFE5;
+    }
+
+    .bank-instructions {
+      background: rgba(255, 255, 255, 0.65);
+      border-radius: 10px;
+      padding: 11px 13px;
+      font-size: 13px;
+      color: #57705B;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .phrase-card {
+      background: white;
+      border: 1px solid #CCD9C9;
+      border-radius: 11px;
+      padding: 14px 10px;
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--green-dark);
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .phrase-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--green);
+    }
+
+    .phrase-card.is-selected {
+      border: 2px solid var(--green-dark);
+      background: #F0F7EE;
+    }
+
+    .grip {
+      color: #9BB09B;
+      font-size: 19px;
+      flex-shrink: 0;
+    }
+
+    .status {
+      margin-top: 13px;
+      min-height: 22px;
+      color: #52765A;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .support-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .action-btn {
+      background: var(--green-light);
+      padding: 13px 17px;
+    }
+
+    .action-btn.primary {
+      background: var(--green-dark);
+      color: white;
+      border-color: var(--green-dark);
+    }
+
+    .action-btn.primary:hover {
+      background: #294A34;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    /* Modal */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(25, 43, 30, 0.58);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--cream);
+      width: min(760px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: 0 20px 65px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .modal h2 {
+      color: var(--green-dark);
+      margin: 0 0 9px;
+      font-size: 27px;
+    }
+
+    .modal-description {
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0 0 20px;
+    }
+
+    .close-btn {
+      position: absolute;
+      right: 20px;
+      top: 18px;
+      border: none;
+      background: #E7EEE4;
+      border-radius: 9px;
+      width: 36px;
+      height: 36px;
+      font-size: 22px;
+      color: var(--green-dark);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: white;
+      color: var(--green-dark);
+      font-weight: 800;
+    }
+
+    .tab.active {
+      background: var(--green-dark);
+      color: white;
+    }
+
+    /* Updated Activity 2 Review cards */
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .option {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .option-name {
+      font-size: 18px;
+      color: var(--green-dark);
+      font-weight: 800;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .pair-label {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--green);
+      margin-bottom: 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pair-text {
+      color: var(--green-dark);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .pair-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 16px 0;
+    }
+
+    .modal-bottom {
+      margin-top: 18px;
+      background: var(--green-light);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      color: var(--green-dark);
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .model-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 19px;
+      margin-top: 13px;
+    }
+
+    .model-box.highlight {
+      background: var(--green-light);
+    }
+
+    .model-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #65836B;
+      margin-bottom: 9px;
+    }
+
+    .model-sentence {
+      font-size: clamp(17px, 2.2vw, 24px);
+      line-height: 1.55;
+      color: var(--green-dark);
+    }
+
+    .model-arrow {
+      text-align: center;
+      font-size: 29px;
+      color: var(--green);
+      margin: 9px 0;
+    }
+
+    .model-highlight {
+      background: #F8E6AA;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    .drag-ghost {
+      position: fixed;
+      pointer-events: none;
+      z-index: 2000;
+      transform: translate(-50%, -50%);
+      padding: 13px 18px;
+      background: white;
+      color: var(--green-dark);
+      border: 2px solid var(--green-dark);
+      border-radius: 11px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.17);
+      font-weight: 800;
+      white-space: nowrap;
+      max-width: 85vw;
+    }
+
+    @media (max-width: 950px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .toolbar {
+        justify-content: flex-start;
+      }
+
+      .cards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 600px) {
+      .app {
+        padding: 13px;
+      }
+
+      .panel {
+        padding: 15px;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .phrase-card {
+        font-size: 12px;
+        padding: 10px 8px;
+      }
+
+      .topic {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .option-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal {
+        padding: 21px 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">ACTIVITY 3 · GUIDED WRITING</div>
+        <h1>Let's Build Our Argument!</h1>
+        <p class="subtitle">
+          Find the right expressions and build your argument step by step.
+        </p>
+      </div>
+
+      <div class="toolbar">
+        <button class="tool-btn" id="undoBtn">↶ Undo</button>
+        <button class="tool-btn" id="resetBtn">↻ Reset</button>
+        <button class="tool-btn" id="fullscreenBtn">⛶ Full Screen</button>
+      </div>
+    </header>
+
+    <section class="topic">
+      <div class="topic-label">Our Topic</div>
+      <div class="topic-question">
+        Are digital textbooks better for the environment than paper textbooks?
+      </div>
+    </section>
+
+    <section class="workspace">
+
+      <!-- LEFT: WRITING BOARD -->
+
+      <div class="panel">
+        <div class="panel-heading">
+          <h2 class="panel-title">✎ Writing Board</h2>
+          <span class="panel-note">Build your argument</span>
+        </div>
+
+        <div id="writingBoard"></div>
+
+        <div class="support-bar">
+          <button class="action-btn" id="reviewBtn">
+            📄 Activity 2 Review
+          </button>
+
+          <button class="action-btn primary" id="modelBtn">
+            ✨ Conclusion Modeling
+          </button>
+        </div>
+
+        <div class="footer-note">
+          Write the complete sentences on Worksheet 2.
+          This board only helps you choose linking expressions.
+        </div>
+      </div>
+
+      <!-- RIGHT: LANGUAGE BANK -->
+
+      <div class="panel bank">
+        <div class="panel-heading">
+          <h2 class="panel-title">▦ Language Bank</h2>
+          <span class="panel-note">15 expressions</span>
+        </div>
+
+        <div class="bank-instructions">
+          Which expressions can we use?<br>
+          Drag a card to the correct part of the Writing Board.
+          You can also click a card and then click a writing area.
+        </div>
+
+        <div class="cards" id="languageBank"></div>
+
+        <div class="status" id="status" aria-live="polite"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- ACTIVITY 2 REVIEW MODAL -->
+
+  <div class="modal-overlay" id="reviewModal" role="dialog"
+       aria-modal="true" aria-labelledby="reviewTitle">
+
+    <div class="modal">
+      <button class="close-btn" data-close="reviewModal"
+              aria-label="Close">×</button>
+
+      <h2 id="reviewTitle">Activity 2 Review</h2>
+
+      <p class="modal-description">
+        Choose ONE Reason–Evidence pair from Activity 2
+        and write it on Worksheet 2.
+      </p>
+
+      <div class="tabs">
+        <button class="tab active" data-stance="AGREE">AGREE</button>
+        <button class="tab" data-stance="DISAGREE">DISAGREE</button>
+      </div>
+
+      <div class="option-grid" id="reviewPairs"></div>
+
+      <div class="modal-bottom">
+        Choose ONE pair and write it on Worksheet 2.
+      </div>
+    </div>
+  </div>
+
+  <!-- CONCLUSION MODELING MODAL -->
+
+  <div class="modal-overlay" id="modelModal" role="dialog"
+       aria-modal="true" aria-labelledby="modelTitle">
+
+    <div class="modal">
+      <button class="close-btn" data-close="modelModal"
+              aria-label="Close">×</button>
+
+      <h2 id="modelTitle">How to Restate a Claim</h2>
+
+      <p class="modal-description">
+        A conclusion restates our claim.
+        We can express the same idea using different words.
+      </p>
+
+      <div class="model-box">
+        <div class="model-label">Original Claim</div>
+
+        <div class="model-sentence">
+          I think digital textbooks are
+          <span class="model-highlight">better for the environment</span>.
+        </div>
+      </div>
+
+      <div class="model-arrow">↓</div>
+
+      <div class="model-box highlight">
+        <div class="model-label">Restated Conclusion</div>
+
+        <div class="model-sentence">
+          In conclusion, digital textbooks are
+          <span class="model-highlight">a more eco-friendly choice</span>.
+        </div>
+      </div>
+
+      <div class="modal-bottom">
+        Same idea, different words!<br>
+        Now, try to write your own conclusion.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    "use strict";
+
+    // --------------------------------------------------
+    // 1. LANGUAGE BANK
+    // --------------------------------------------------
+
+    const expressions = [
+      "Second,",
+      "I believe that",
+      "For example,",
+      "To sum up,",
+      "First,",
+      "I think that",
+      "Next,",
+      "In conclusion,",
+      "For instance,",
+      "One reason is that",
+      "In my opinion,",
+      "Another reason is that",
+      "First of all,",
+      "For these reasons,",
+      "To give an example,"
+    ];
+
+    const sections = [
+      { id: "claim", label: "Claim" },
+      { id: "reason1", label: "Reason 1" },
+      { id: "evidence1", label: "Evidence 1" },
+      { id: "reason2", label: "Reason 2" },
+      { id: "evidence2", label: "Evidence 2" },
+      { id: "conclusion", label: "Conclusion" }
+    ];
+
+    // --------------------------------------------------
+    // 2. ACTIVITY 2 REVIEW DATA
+    // --------------------------------------------------
+
+    const reviewData = {
+      AGREE: [
+        {
+          reasonLabel: "Reason 1",
+          reason: "Digital textbooks can reduce paper use.",
+          evidenceLabel: "Evidence 1",
+          evidence: "For example, schools print thousands of textbooks every year, and this uses many trees."
+        },
+        {
+          reasonLabel: "Reason 2",
+          reason: "Digital textbooks can be updated without making new books.",
+          evidenceLabel: "Evidence 2",
+          evidence: "For instance, schools can update digital textbooks online instead of printing new editions."
+        }
+      ],
+
+      DISAGREE: [
+        {
+          reasonLabel: "Reason 1",
+          reason: "Digital textbooks use a lot of energy.",
+          evidenceLabel: "Evidence 1",
+          evidence: "For example, students charge their tablets almost every day, and much electricity comes from burning coal."
+        },
+        {
+          reasonLabel: "Reason 2",
+          reason: "Digital devices can create harmful waste.",
+          evidenceLabel: "Evidence 2",
+          evidence: "For instance, old tablets contain materials that can pollute the environment if they are not recycled properly."
+        }
+      ]
+    };
+
+    // --------------------------------------------------
+    // 3. STATE
+    // --------------------------------------------------
+
+    let placements = {};
+    let selectedExpression = null;
+    let history = [];
+
+    const boardElement = document.getElementById("writingBoard");
+    const bankElement = document.getElementById("languageBank");
+    const statusElement = document.getElementById("status");
+    const undoButton = document.getElementById("undoBtn");
+
+    // --------------------------------------------------
+    // 4. RENDER WRITING BOARD
+    // --------------------------------------------------
+
+    function renderBoard() {
+      boardElement.innerHTML = "";
+
+      sections.forEach(section => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "writing-section";
+
+        const label = document.createElement("div");
+        label.className = "writing-label";
+        label.textContent = section.label;
+
+        const zone = document.createElement("div");
+        zone.className = "drop-zone";
+        zone.dataset.section = section.id;
+
+        const current = placements[section.id];
+
+        if (current) {
+          const placed = document.createElement("div");
+          placed.className = "placed-expression";
+
+          const phraseText = document.createElement("span");
+          phraseText.textContent = current;
+
+          const removeButton = document.createElement("button");
+          removeButton.className = "remove-expression";
+          removeButton.textContent = "×";
+          removeButton.title = "Remove expression";
+          removeButton.setAttribute("aria-label", "Remove expression");
+
+          removeButton.addEventListener("click", event => {
+            event.stopPropagation();
+            saveHistory();
+            delete placements[section.id];
+            renderBoard();
+            updateUndoButton();
+          });
+
+          placed.append(phraseText, removeButton);
+          zone.appendChild(placed);
+
+          const line = document.createElement("div");
+          line.className = "writing-line";
+          zone.appendChild(line);
+
+        } else {
+          const placeholder = document.createElement("span");
+          placeholder.className = "placeholder";
+          placeholder.textContent = "Drop an expression here";
+          zone.appendChild(placeholder);
+        }
+
+        zone.addEventListener("click", () => {
+          if (selectedExpression !== null) {
+            placeExpression(section.id, selectedExpression);
+            selectedExpression = null;
+            renderBank();
+          }
+        });
+
+        zone.addEventListener("dragover", event => {
+          event.preventDefault();
+          zone.classList.add("drag-over");
+        });
+
+        zone.addEventListener("dragleave", () => {
+          zone.classList.remove("drag-over");
+        });
+
+        zone.addEventListener("drop", event => {
+          event.preventDefault();
+          zone.classList.remove("drag-over");
+
+          const phrase = event.dataTransfer.getData("text/plain");
+
+          if (phrase && expressions.includes(phrase)) {
+            placeExpression(section.id, phrase);
+          }
+        });
+
+        wrapper.append(label, zone);
+        boardElement.appendChild(wrapper);
+      });
+    }
+
+    // --------------------------------------------------
+    // 5. RENDER LANGUAGE BANK
+    // --------------------------------------------------
+
+    function renderBank() {
+      bankElement.innerHTML = "";
+
+      expressions.forEach(expression => {
+        const card = document.createElement("div");
+
+        card.className = "phrase-card";
+        card.setAttribute("role", "button");
+        card.setAttribute("tabindex", "0");
+        card.setAttribute("aria-label", expression);
+        card.dataset.expression = expression;
+
+        if (selectedExpression === expression) {
+          card.classList.add("is-selected");
+        }
+
+        const grip = document.createElement("span");
+        grip.className = "grip";
+        grip.textContent = "⋮⋮";
+
+        const text = document.createElement("span");
+        text.textContent = expression;
+
+        card.append(grip, text);
+
+        card.addEventListener("click", () => {
+          selectExpression(expression);
+        });
+
+        card.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            selectExpression(expression);
+          }
+        });
+
+        card.addEventListener("pointerdown", event => {
+          if (event.button !== 0) return;
+          beginPointerDrag(event, expression, card);
+        });
+
+        bankElement.appendChild(card);
+      });
+    }
+
+    function selectExpression(expression) {
+      selectedExpression =
+        selectedExpression === expression ? null : expression;
+
+      renderBank();
+
+      setStatus(
+        selectedExpression
+          ? `Selected: ${selectedExpression} — Now choose a writing area.`
+          : ""
+      );
+    }
+
+    // --------------------------------------------------
+    // 6. PLACE / REPLACE EXPRESSION
+    // --------------------------------------------------
+
+    function placeExpression(sectionId, expression) {
+      if (!expressions.includes(expression)) return;
+
+      if (placements[sectionId] === expression) {
+        setStatus(`Already placed: ${expression}`);
+        return;
+      }
+
+      saveHistory();
+
+      placements[sectionId] = expression;
+
+      renderBoard();
+      updateUndoButton();
+
+      const section = sections.find(item => item.id === sectionId);
+
+      setStatus(`${expression} → ${section.label}`);
+    }
+
+    function saveHistory() {
+      history.push({ ...placements });
+
+      if (history.length > 50) {
+        history.shift();
+      }
+    }
+
+    function updateUndoButton() {
+      undoButton.disabled = history.length === 0;
+    }
+
+    // --------------------------------------------------
+    // 7. POINTER DRAG & DROP
+    // --------------------------------------------------
+
+    function beginPointerDrag(event, expression, sourceCard) {
+      const startX = event.clientX;
+      const startY = event.clientY;
+
+      let ghost = null;
+      let dragging = false;
+
+      const pointerId = event.pointerId;
+
+      sourceCard.setPointerCapture(pointerId);
+
+      function move(event) {
+        if (event.pointerId !== pointerId) return;
+
+        const distance = Math.hypot(
+          event.clientX - startX,
+          event.clientY - startY
+        );
+
+        if (!dragging && distance > 7) {
+          dragging = true;
+
+          ghost = document.createElement("div");
+          ghost.className = "drag-ghost";
+          ghost.textContent = expression;
+          document.body.appendChild(ghost);
+        }
+
+        if (!dragging) return;
+
+        ghost.style.left = `${event.clientX}px`;
+        ghost.style.top = `${event.clientY}px`;
+
+        document.querySelectorAll(".drop-zone").forEach(zone => {
+          zone.classList.remove("drag-over");
+        });
+
+        const target = document.elementFromPoint(
+          event.clientX,
+          event.clientY
+        );
+
+        const zone = target?.closest(".drop-zone");
+
+        if (zone) {
+          zone.classList.add("drag-over");
+        }
+      }
+
+      function finish(event) {
+        if (event.pointerId !== pointerId) return;
+
+        if (dragging) {
+          const target = document.elementFromPoint(
+            event.clientX,
+            event.clientY
+          );
+
+          const zone = target?.closest(".drop-zone");
+
+          if (zone) {
+            placeExpression(zone.dataset.section, expression);
+            selectedExpression = null;
+            renderBank();
+          }
+
+          if (ghost) ghost.remove();
+
+          document.querySelectorAll(".drop-zone").forEach(zone => {
+            zone.classList.remove("drag-over");
+          });
+
+        } else {
+          selectExpression(expression);
+        }
+
+        sourceCard.removeEventListener("pointermove", move);
+        sourceCard.removeEventListener("pointerup", finish);
+        sourceCard.removeEventListener("pointercancel", cancel);
+      }
+
+      function cancel() {
+        if (ghost) ghost.remove();
+
+        document.querySelectorAll(".drop-zone").forEach(zone => {
+          zone.classList.remove("drag-over");
+        });
+
+        sourceCard.removeEventListener("pointermove", move);
+        sourceCard.removeEventListener("pointerup", finish);
+        sourceCard.removeEventListener("pointercancel", cancel);
+      }
+
+      sourceCard.addEventListener("pointermove", move);
+      sourceCard.addEventListener("pointerup", finish);
+      sourceCard.addEventListener("pointercancel", cancel);
+    }
+
+    // --------------------------------------------------
+    // 8. UNDO / RESET / FULL SCREEN
+    // --------------------------------------------------
+
+    undoButton.addEventListener("click", () => {
+      if (history.length === 0) return;
+
+      placements = history.pop();
+      selectedExpression = null;
+
+      renderBoard();
+      renderBank();
+      updateUndoButton();
+      setStatus("Last change undone.");
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      if (!confirm("Clear all expressions from the Writing Board?")) {
+        return;
+      }
+
+      saveHistory();
+      placements = {};
+      selectedExpression = null;
+
+      renderBoard();
+      renderBank();
+      updateUndoButton();
+
+      setStatus("Writing Board has been reset.");
+    });
+
+    document.getElementById("fullscreenBtn").addEventListener("click", () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.();
+      } else {
+        document.exitFullscreen?.();
+      }
+    });
+
+    // --------------------------------------------------
+    // 9. MODALS
+    // --------------------------------------------------
+
+    const reviewModal = document.getElementById("reviewModal");
+    const modelModal = document.getElementById("modelModal");
+
+    function openModal(modal) {
+      modal.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal(modal) {
+      modal.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    document.getElementById("reviewBtn").addEventListener("click", () => {
+      openModal(reviewModal);
+    });
+
+    document.getElementById("modelBtn").addEventListener("click", () => {
+      openModal(modelModal);
+    });
+
+    document.querySelectorAll("[data-close]").forEach(button => {
+      button.addEventListener("click", () => {
+        closeModal(document.getElementById(button.dataset.close));
+      });
+    });
+
+    document.querySelectorAll(".modal-overlay").forEach(modal => {
+      modal.addEventListener("click", event => {
+        if (event.target === modal) {
+          closeModal(modal);
+        }
+      });
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeModal(reviewModal);
+        closeModal(modelModal);
+      }
+    });
+
+    // --------------------------------------------------
+    // 10. ACTIVITY 2 REVIEW
+    // --------------------------------------------------
+
+    function renderReview(stance) {
+      const container = document.getElementById("reviewPairs");
+      container.innerHTML = "";
+
+      reviewData[stance].forEach(pair => {
+        const card = document.createElement("div");
+        card.className = "option";
+
+        const reasonLabel = document.createElement("div");
+        reasonLabel.className = "pair-label";
+        reasonLabel.textContent = pair.reasonLabel;
+
+        const reasonText = document.createElement("div");
+        reasonText.className = "pair-text";
+        reasonText.textContent = pair.reason;
+
+        const divider = document.createElement("hr");
+        divider.className = "pair-divider";
+
+        const evidenceLabel = document.createElement("div");
+        evidenceLabel.className = "pair-label";
+        evidenceLabel.textContent = pair.evidenceLabel;
+
+        const evidenceText = document.createElement("div");
+        evidenceText.className = "pair-text";
+        evidenceText.textContent = pair.evidence;
+
+        card.append(
+          reasonLabel,
+          reasonText,
+          divider,
+          evidenceLabel,
+          evidenceText
+        );
+
+        container.appendChild(card);
+      });
+    }
+
+    document.querySelectorAll("[data-stance]").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll("[data-stance]").forEach(item => {
+          item.classList.remove("active");
+        });
+
+        tab.classList.add("active");
+        renderReview(tab.dataset.stance);
+      });
+    });
+
+    // --------------------------------------------------
+    // 11. STATUS
+    // --------------------------------------------------
+
+    function setStatus(message) {
+      statusElement.textContent = message;
+    }
+
+    // --------------------------------------------------
+    // 12. INITIALIZE
+    // --------------------------------------------------
+
+    renderBoard();
+    renderBank();
+    renderReview("AGREE");
+    updateUndoButton();
+
+  </script>
+</body>
+</html>
